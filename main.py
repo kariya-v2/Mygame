@@ -39,6 +39,15 @@ class Clay:
         self.y = HEIGHT  # 初期Y座標（ウィンドウの底）
         self.velocity_x = random.uniform(0, 9)  # X方向の一定の初速度
         self.velocity_y = -25 + random.uniform(0, 9)  # 上向きの初速度（ランダムでばらつきあり）
+        # 画像をロード
+        clay_image = pygame.image.load('images/money.png').convert_alpha()
+
+        # 新しいサイズを指定（例えば、幅100px、高さ100pxに変える場合）
+        new_size = (40, 40)  # 幅と高さを指定するタプル
+        self.clayimage = pygame.transform.scale(
+            clay_image, new_size)  # 画像をリサイズ
+
+        self.radius = self.clayimage.get_width() // 2  # 画像の半径
         self.alive = True  # クレーが生きているかどうか
 
     def update(self):
@@ -53,8 +62,8 @@ class Clay:
 
     def draw(self, surface):
         if self.alive:  # aliveの場合のみ描画
-            pygame.draw.circle(
-                surface, RED, (int(self.x), int(self.y)), CLAY_RADIUS)
+            surface.blit(self.clayimage, (self.x - self.radius,
+                         self.y - self.radius))  # 画像を描画
 
 
 # 青い的のクラス定義
