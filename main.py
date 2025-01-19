@@ -69,6 +69,15 @@ class Clay:
 # 青い的のクラス定義
 class Target:
     def __init__(self):
+        self.image_path = 'images/watch.png'  # 画像のパス
+        self.width = TARGET_RADIUS * 4  # 画像の幅（円の直径）
+        self.height = TARGET_RADIUS * 4  # 画像の高さ（円の直径）
+
+        # 画像のロードとサイズ変更
+        self.image = pygame.image.load(self.image_path)
+        self.image = pygame.transform.scale(
+            self.image, (self.width, self.height))  # 画像のサイズを変更
+
         self.x = random.randint(
             0 + TARGET_RADIUS, WIDTH - TARGET_RADIUS)  # ランダムなX位置
         self.y = 0  # 初期Y座標（ウィンドウの上）
@@ -85,12 +94,22 @@ class Target:
 
     def draw(self, surface):
         if self.alive:  # aliveの場合のみ描画
-            pygame.draw.circle(surface, BLUE, (int(self.x),
-                               int(self.y)), TARGET_RADIUS)
+            # 画像を描画（位置を考慮してrectを指定)
+            rect = self.image.get_rect(center=(self.x, self.y))  # 中心を指定
+            surface.blit(self.image, rect)  # 画像を描画
 
 
 class Bullet:
     def __init__(self):
+        self.image_path = 'images/egg.png'  # 画像のパス
+        self.width = BULLET_RADIUS * 2  # 画像の幅（円の直径）
+        self.height = BULLET_RADIUS * 2  # 画像の高さ（円の直径）
+
+        # 画像のロードとサイズ変更
+        self.image = pygame.image.load(self.image_path)
+        self.image = pygame.transform.scale(
+            self.image, (self.width, self.height))  # 画像のサイズを変更
+
         self.x = random.randrange(0, WIDTH)  # X位置はランダム
         self.y = random.randrange(0, HEIGHT)  # Y位置はランダム
         self.velocity_x = random.uniform(-5, 5)  # X方向の速度（左または右へ、ランダム）
@@ -111,11 +130,13 @@ class Bullet:
 
     def draw(self, surface):
         if self.alive:  # aliveの場合のみ描画
-            pygame.draw.circle(surface, GRAY, (int(self.x),
-                               int(self.y)), BULLET_RADIUS)
-
+            # 画像を描画（位置を考慮してrectを指定)
+            rect = self.image.get_rect(center=(self.x, self.y))  # 中心を指定
+            surface.blit(self.image, rect)  # 画像を描画
 
 # スタート画面を表示する関数
+
+
 def display_start_screen():
     screen.fill(WHITE)
     title_surface = score_font.render("Clay Shooting Game", True, (0, 0, 0))
@@ -287,10 +308,11 @@ while running:
         display_game_over(score)
 
         # リスタート待機
-        while True:
+        while not game_started:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    game_started = False
                     break
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # 左クリック
